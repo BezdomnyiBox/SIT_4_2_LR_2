@@ -1,0 +1,226 @@
+DROP TABLE IF EXISTS clients;
+CREATE TABLE clients(
+    client_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	client_name VARCHAR(60),
+    client_phone DECIMAL(13),
+	client_address VARCHAR(60)
+);
+
+INSERT INTO clients(client_name, client_phone, client_address)  VALUES 
+('Дмитриев Иван Николаевич', 89991000000, 'ул. Тихая, д. 10, кв. 34'),
+('Кукин Даниил Данилович', 87771004000, 'ул. Тихая, д. 11, кв. 44'),
+('Назарова Елена Магомедовна', 89324433000, 'ул. Славы КПСС, д. 150, кв. 4'),
+('Алиев Руслан Майклович', 81231233330, 'ул. Молодежная, д. 122, кв. 642'),
+('Базарин Олег Егорович', 89231004550, 'ул. Озерная, д. 102, кв. 347'),
+('Чичикова Жанна Степановна', 80001000000, 'ул. Петрозаводская, д. 60, кв. 124'),
+('Столбин Никита Джекович', 56661223000, 'ул. Ленина, д. 101, кв. 1');
+
+DROP TABLE IF EXISTS masters;
+CREATE TABLE masters(
+    master_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	master_name VARCHAR(60),
+    master_phone DECIMAL(13),
+	master_exp INTEGER
+);
+
+INSERT INTO masters(master_name, master_phone, master_exp)  VALUES 
+('Сильвестр Сталлоне Аполлонович', 89991111111, 12),
+('Узумаки Наруто Минатович', 86662424333, 1),
+('Крутой Мебельщик Олегович', 84327790056, 50);
+
+DROP TABLE IF EXISTS colors;
+CREATE TABLE colors(
+    color_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	color_name VARCHAR(30)
+);
+
+INSERT INTO colors(color_name)  VALUES 
+('Ореховый'),
+('Белый'),
+('Черный'),
+('Красный'),
+('Бук'),
+('Дуб'),
+('Вишня'),
+('Синий');
+
+DROP TABLE IF EXISTS types;
+CREATE TABLE types(
+    type_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	type_name VARCHAR(30)
+);
+
+INSERT INTO types(type_name)  VALUES 
+('Кровать'),
+('Шкаф-купе'),
+('Стол'),
+('Стул'),
+('Тумба'),
+('Пенал'),
+('Гардероб'),
+('Полка');
+
+DROP TABLE IF EXISTS steps;
+CREATE TABLE steps (
+    step_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	step_name VARCHAR(50)
+);
+
+INSERT INTO steps(step_name)  VALUES 
+('Не начат вообще'),
+('Составлен проект'),
+('Материалы прибыли'),
+('В процессе создания'),
+('На стадии завершения'),
+('Финальные штрихи'),
+('Направлен на доставку'),
+('Установлен'),
+('Заморожен'),
+('Переделка'),
+('Возврат');
+
+DROP TABLE IF EXISTS contracts;
+CREATE TABLE contracts (
+    contract_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+	client_id INTEGER,
+    check_in_date DATE, 
+	check_out_date DATE,
+    FOREIGN KEY (client_id)  REFERENCES clients (client_id) ON DELETE CASCADE
+);
+
+INSERT INTO contracts (client_id, check_in_date, check_out_date)  VALUES
+(1,  '2023-09-07', '2023-09-09'),
+(1,  '2023-01-11', '2023-02-13'),
+(2,  '2023-04-01', '2023-04-15'),
+(3,  '2023-09-12', '2023-10-01'),
+(4,  '2023-12-04', '2023-12-31'),
+(5,  '2023-09-11', '2023-09-19'),
+(5,  '2023-05-07', '2023-05-10'),
+(7,  '2023-01-21', '2023-02-25'),
+(7,  '2023-11-30', '2023-12-05'),
+(7,  '2023-07-01', '2023-09-02');
+
+
+DROP TABLE IF EXISTS furnitures;
+CREATE TABLE furnitures (
+    furniture_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    furniture_name VARCHAR(60), 
+    furniture_type INTEGER DEFAULT 0,
+    furniture_color INTEGER DEFAULT 0,
+    furniture_length INTEGER DEFAULT 0,
+    furniture_width INTEGER DEFAULT 0, 
+	furniture_height INTEGER DEFAULT 0,
+    furniture_price DECIMAL(10,2),
+    FOREIGN KEY (furniture_type)  REFERENCES types (type_id) ON DELETE SET DEFAULT,
+    FOREIGN KEY (furniture_color)  REFERENCES colors (color_id) ON DELETE SET DEFAULT
+);
+
+INSERT INTO furnitures (furniture_name, furniture_type, furniture_color, furniture_length, furniture_width, furniture_height, furniture_price)  VALUES
+('Итальяно', 1, 1, 1000, 2000, 500, 10000),
+('Домашний', 2, 4, 2300, 2000, 500, 20000),
+('Домашний', 3, 5, 1000, 2000, 500, 10000),
+('Домашний', 4, 8, 1000, 2000, 500, 20000),
+('Домашний', 5, 2, 5600, 1000, 1500, 10000),
+('Домашний', 6, 5, 4000, 2000, 500, 10000),
+('Офисный', 8, 4, 2000, 2000, 1000, 20000),
+('Игровой', 8, 7, 3000, 2000, 500, 50000),
+('Офисный', 3, 7, 2000, 2000, 1500, 20000),
+('Лофт', 3, 3, 2300, 2000, 2500, 50000),
+('Лофт', 4, 3, 1500, 200, 3500, 80000),
+('Лофт', 5, 3, 6700, 1000, 1500, 70000);
+
+DROP TABLE IF EXISTS sellings;
+CREATE TABLE sellings(
+    selling_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    contract_id INTEGER, 
+    furniture_id INTEGER,
+	count INTEGER,	
+    FOREIGN KEY (contract_id)  REFERENCES contracts (contract_id) ON DELETE CASCADE,
+    FOREIGN KEY (furniture_id)  REFERENCES furnitures(furniture_id) ON DELETE CASCADE
+);
+
+INSERT INTO sellings (contract_id, furniture_id, count)  VALUES
+(1, 1, 1),
+(2, 12, 10),
+(3, 11, 1),
+(4, 10, 1),
+(5, 4, 2),
+(6, 5, 3),
+(7, 5, 1),
+(8, 3, 4),
+(9, 3, 1),
+(5, 2, 4),
+(6, 8, 3),
+(7, 3, 1),
+(8, 9, 3),
+(9, 2, 1),
+(10, 7, 100);
+
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders(
+    order_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    master_id INTEGER, 
+    selling_id INTEGER,
+	salary INTEGER,	
+    FOREIGN KEY (master_id)  REFERENCES masters (master_id) ON DELETE CASCADE,
+    FOREIGN KEY (selling_id)  REFERENCES sellings (selling_id) ON DELETE CASCADE
+);
+
+INSERT INTO orders (master_id, selling_id, salary)  VALUES
+(1, 1, 10000),
+(2, 12, 100000),
+(3, 11, 10000),
+(1, 10, 10000),
+(2, 4, 25000),
+(3, 5, 30000),
+(1, 5, 10000),
+(2, 3, 40000),
+(3, 3, 10000),
+(1, 2, 40000),
+(2, 8, 30000),
+(3, 3, 10000),
+(1, 9, 30000),
+(2, 2, 10000),
+(1, 7, 1000000);
+
+DROP TABLE IF EXISTS order_status;
+CREATE TABLE order_status(
+    order_status_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    order_id INTEGER, 
+    order_status INTEGER,
+	check_date DATE,	
+    FOREIGN KEY (order_id)  REFERENCES orders (order_id) ON DELETE CASCADE,
+    FOREIGN KEY (order_status)  REFERENCES steps (step_id) ON DELETE CASCADE
+);
+
+INSERT INTO order_status (order_id, order_status, check_date)  VALUES
+(1, 1, '2023-09-09'),
+(2, 1, '2023-09-09'),
+(3, 1, '2023-09-09'),
+(4, 1, '2023-09-09'),
+(5, 1, '2023-09-09'),
+(6, 1, '2023-09-09'),
+(7, 1, '2023-09-09'),
+(8, 1, '2023-09-09'),
+(9, 1, '2023-09-09'),
+(10, 1, '2023-09-09'),
+(11, 1, '2023-09-09'),
+(12, 1, '2023-09-09'),
+(13, 1, '2023-09-09'),
+(14, 1, '2023-09-09'),
+(15, 2, '2023-09-09'),
+(1, 5, '2023-12-05'),
+(2, 6, '2023-12-05'),
+(3, 5, '2023-12-05'),
+(4, 5, '2023-12-05'),
+(5, 6, '2023-12-05'),
+(6, 6, '2023-12-05'),
+(7, 4, '2023-12-05'),
+(8, 4, '2023-12-05'),
+(9, 5, '2023-12-05'),
+(10, 6, '2023-12-05'),
+(11, 7, '2023-12-05'),
+(12, 4, '2023-12-05'),
+(13, 5, '2023-12-05'),
+(14, 8, '2023-12-05'),
+(15, 9, '2023-12-05');
